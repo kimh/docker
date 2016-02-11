@@ -46,26 +46,26 @@ const (
 	BIND = syscall.MS_BIND
 
 	// RBIND remounts a subtree and all possible submounts somewhere else.
-	RBIND = syscall.MS_BIND | syscall.MS_REC
+	RBIND = syscall.MS_BIND // | syscall.MS_REC
 
 	// UNBINDABLE creates a mount which cannot be cloned through a bind operation.
 	UNBINDABLE = syscall.MS_UNBINDABLE
 
 	// RUNBINDABLE marks the entire mount tree as UNBINDABLE.
-	RUNBINDABLE = syscall.MS_UNBINDABLE | syscall.MS_REC
+	RUNBINDABLE = syscall.MS_UNBINDABLE // | syscall.MS_REC
 
 	// PRIVATE creates a mount which carries no propagation abilities.
 	PRIVATE = syscall.MS_PRIVATE
 
 	// RPRIVATE marks the entire mount tree as PRIVATE.
-	RPRIVATE = syscall.MS_PRIVATE | syscall.MS_REC
+	RPRIVATE = syscall.MS_PRIVATE // | syscall.MS_REC
 
 	// SLAVE creates a mount which receives propagation from its master, but not
 	// vice versa.
 	SLAVE = syscall.MS_SLAVE
 
 	// RSLAVE marks the entire mount tree as SLAVE.
-	RSLAVE = syscall.MS_SLAVE | syscall.MS_REC
+	RSLAVE = syscall.MS_SLAVE //| syscall.MS_REC
 
 	// SHARED creates a mount which provides the ability to create mirrors of
 	// that mount such that mounts and unmounts within any of the mirrors
@@ -73,7 +73,7 @@ const (
 	SHARED = syscall.MS_SHARED
 
 	// RSHARED marks the entire mount tree as SHARED.
-	RSHARED = syscall.MS_SHARED | syscall.MS_REC
+	RSHARED = syscall.MS_SHARED //| syscall.MS_REC
 
 	// RELATIME updates inode access times relative to modify or change time.
 	RELATIME = syscall.MS_RELATIME

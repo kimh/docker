@@ -94,9 +94,9 @@ func (d *Driver) createContainer(c *execdriver.Command, hooks execdriver.Hooks) 
 		}
 	}
 
-	if err := execdriver.SetupCgroups(container, c); err != nil {
-		return nil, err
-	}
+	//if err := execdriver.SetupCgroups(container, c); err != nil {
+	//	return nil, err
+	//}
 
 	container.OomScoreAdj = c.OomScoreAdj
 
@@ -452,7 +452,7 @@ func (d *Driver) setupMounts(container *configs.Config, c *execdriver.Command) e
 			})
 			continue
 		}
-		flags := syscall.MS_BIND | syscall.MS_REC
+		flags := syscall.MS_BIND
 		var pFlag int
 		if !m.Writable {
 			flags |= syscall.MS_RDONLY

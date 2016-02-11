@@ -331,6 +331,7 @@ func (daemon *Daemon) buildSandboxOptions(container *container.Container, n libn
 		dnsOptions  []string
 	)
 
+	println("-- buildSandboxOptions 1 --")
 	sboxOptions = append(sboxOptions, libnetwork.OptionHostname(container.Config.Hostname),
 		libnetwork.OptionDomainname(container.Config.Domainname))
 
