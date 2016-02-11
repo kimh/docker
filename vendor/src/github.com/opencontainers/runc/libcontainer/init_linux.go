@@ -99,44 +99,56 @@ func populateProcessEnvironment(env []string) error {
 // and working dir, and closes any leaked file descriptors
 // before executing the command inside the namespace
 func finalizeNamespace(config *initConfig) error {
+	println("-- finalizeNamespace 1 --")
 	// Ensure that all unwanted fds we may have accidentally
 	// inherited are marked close-on-exec so they stay out of the
 	// container
 	if err := utils.CloseExecFrom(config.PassedFilesCount + 3); err != nil {
-		return err
+		// Patched by CircleCI
+		// Getting the following AppArmor error
+		// apparmor="DENIED" operation="mount" info="failed flags match" error=-13 profile="lxc-container-default-with-nesting" name="/var/lib/docker/vfs/dir/e345ba644f97b37f9a7a1e32e29629ce8a4d0e16aec17634888f69d5c1f93a3f/proc/" pid=28535 comm="exe" fstype="proc" srcname="proc" flags="rw, nosuid, nodev, noexec"
+		//return err
 	}
-
-	capabilities := config.Config.Capabilities
-	if config.Capabilities != nil {
-		capabilities = config.Capabilities
-	}
-	w, err := newCapWhitelist(capabilities)
-	if err != nil {
-		return err
-	}
+	println("-- finalizeNamespace 2 --")
+	//capabilities := config.Config.Capabilities
+	//if config.Capabilities != nil {
+	//	capabilities = config.Capabilities
+	//}
+	println("-- finalizeNamespace 3 --")
+	//w, err := newCapWhitelist(capabilities)
+	//if err != nil {
+	//	return err
+	//}
+	println("-- finalizeNamespace 4 --")
 	// drop capabilities in bounding set before changing user
-	if err := w.dropBoundingSet(); err != nil {
-		return err
-	}
-	// preserve existing capabilities while we change users
-	if err := system.SetKeepCaps(); err != nil {
-		return err
-	}
+	//if err := w.dropBoundingSet(); err != nil {
+	//	return err
+	//}
+	//println("-- finalizeNamespace 5 --")
+	//// preserve existing capabilities while we change users
+	//if err := system.SetKeepCaps(); err != nil {
+	//	return err
+	//}
+	println("-- finalizeNamespace 6 --")
 	if err := setupUser(config); err != nil {
 		return err
 	}
-	if err := system.ClearKeepCaps(); err != nil {
-		return err
-	}
+	println("-- finalizeNamespace 7 --")
+	//if err := system.ClearKeepCaps(); err != nil {
+	//	return err
+	//}
+	println("-- finalizeNamespace 8 --")
 	// drop all other capabilities
-	if err := w.drop(); err != nil {
-		return err
-	}
+	//if err := w.drop(); err != nil {
+	//	return err
+	//}
+	println("-- finalizeNamespace 9 --")
 	if config.Cwd != "" {
 		if err := syscall.Chdir(config.Cwd); err != nil {
 			return err
 		}
 	}
+	println("-- finalizeNamespace 10 --")
 	return nil
 }
 

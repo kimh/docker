@@ -31,6 +31,7 @@ func init() {
 }
 
 func newCapWhitelist(caps []string) (*whitelist, error) {
+	println("-- newCapWhitelist 1 --")
 	l := []capability.Cap{}
 	for _, c := range caps {
 		v, ok := capabilityMap[c]
@@ -39,10 +40,12 @@ func newCapWhitelist(caps []string) (*whitelist, error) {
 		}
 		l = append(l, v)
 	}
+	println("-- newCapWhitelist 2 --")
 	pid, err := capability.NewPid(os.Getpid())
 	if err != nil {
 		return nil, err
 	}
+	println("-- newCapWhitelist 3 --")
 	return &whitelist{
 		keep: l,
 		pid:  pid,

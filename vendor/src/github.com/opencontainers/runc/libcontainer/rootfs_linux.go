@@ -25,9 +25,12 @@ const defaultMountFlags = syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NOD
 // setupRootfs sets up the devices, mount points, and filesystems for use inside a
 // new mount namespace.
 func setupRootfs(config *configs.Config, console *linuxConsole) (err error) {
+
+	println("-- setupRootfs 1 --")
 	if err := prepareRoot(config); err != nil {
 		return newSystemError(err)
 	}
+	println("-- setupRootfs 2 --")
 	setupDev := len(config.Devices) != 0
 	for _, m := range config.Mounts {
 		for _, precmd := range m.PremountCmds {
@@ -49,6 +52,7 @@ func setupRootfs(config *configs.Config, console *linuxConsole) (err error) {
 			}
 		}
 	}
+	println("-- setupRootfs 3 --")
 	if setupDev {
 		if err := createDevices(config); err != nil {
 			return newSystemError(err)
@@ -60,27 +64,34 @@ func setupRootfs(config *configs.Config, console *linuxConsole) (err error) {
 			return newSystemError(err)
 		}
 	}
+	println("-- setupRootfs 4 --")
 	if err := syscall.Chdir(config.Rootfs); err != nil {
 		return newSystemError(err)
 	}
-	if config.NoPivotRoot {
-		err = msMoveRoot(config.Rootfs)
-	} else {
-		err = pivotRoot(config.Rootfs, config.PivotDir)
-	}
+	println("-- setupRootfs 5 --")
+	//if config.NoPivotRoot {
+	//	err = msMoveRoot(config.Rootfs)
+	//} else {
+	//	err = pivotRoot(config.Rootfs, config.PivotDir)
+	//}
+	err = msMoveRoot(config.Rootfs)
+	println("-- setupRootfs 6 --")
 	if err != nil {
 		return newSystemError(err)
 	}
+	println("-- setupRootfs 7 --")
 	if setupDev {
 		if err := reOpenDevNull(); err != nil {
 			return newSystemError(err)
 		}
 	}
+	println("-- setupRootfs 8 --")
 	if config.Readonlyfs {
 		if err := setReadonly(); err != nil {
 			return newSystemError(err)
 		}
 	}
+	println("-- setupRootfs 9 --")
 	syscall.Umask(0022)
 	return nil
 }
@@ -510,17 +521,18 @@ func prepareRoot(config *configs.Config) error {
 	if config.RootPropagation != 0 {
 		flag = config.RootPropagation
 	}
+	println("-- prepareRoot 1 --")
 	if err := syscall.Mount("", "/", "", uintptr(flag), ""); err != nil {
 		// Patched by CircleCI
 		// Don't remember what error I'm getting here but didn't work.
 		//return err
 	}
-
+	println("-- prepareRoot 2 --")
 	if err := rootfsParentMountPrivate(config); err != nil {
 		return err
 	}
-
-	return syscall.Mount(config.Rootfs, config.Rootfs, "bind", syscall.MS_BIND|syscall.MS_REC, "")
+	println("-- prepareRoot 3 --")
+	return syscall.Mount(config.Rootfs, config.Rootfs, "bind", syscall.MS_BIND, "")
 }
 
 func setReadonly() error {
@@ -575,12 +587,15 @@ func pivotRoot(rootfs, pivotBaseDir string) error {
 }
 
 func msMoveRoot(rootfs string) error {
-	if err := syscall.Mount(rootfs, "/", "", syscall.MS_MOVE, ""); err != nil {
+	println("--msMoveRoot 1 --")
+	if err := syscall.Mount(rootfs, "/", "", syscall.MS_BIND, ""); err != nil {
 		return err
 	}
+	println("--msMoveRoot 2 --")
 	if err := syscall.Chroot("."); err != nil {
 		return err
 	}
+	println("--msMoveRoot 3 --")
 	return syscall.Chdir("/")
 }
 

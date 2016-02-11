@@ -18,6 +18,7 @@ import (
 // calls Setup() on each. It also looks to see if is a network mount such as
 // /etc/resolv.conf, and if it is not, appends it to the array of mounts.
 func (daemon *Daemon) setupMounts(container *container.Container) ([]execdriver.Mount, error) {
+	println("-- setupMounts 1 --")
 	var mounts []execdriver.Mount
 	for _, m := range container.MountPoints {
 		if err := daemon.lazyInitializeVolume(container.ID, m); err != nil {
