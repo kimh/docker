@@ -117,7 +117,14 @@ func mountToRootfs(m *configs.Mount, rootfs, mountLabel string) error {
 	}
 
 	switch m.Device {
-	case "proc", "sysfs":
+	case "proc":
+		if err := os.MkdirAll(dest, 0755); err != nil {
+			return err
+		}
+		if err := syscall.Mount(m.Source, dest, m.Device, syscall.MS_MGC_VAL, ""); err != nil {
+			return err
+		}
+	case "sysfs":
 		if err := os.MkdirAll(dest, 0755); err != nil {
 			return err
 		}
